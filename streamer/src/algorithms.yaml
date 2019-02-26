@@ -1,0 +1,13 @@
+face_tracker:
+  # frame size used by the face detector
+  max_size_face_detector: 256
+
+  valid_distance_to_center: .3
+
+  valid_speed_distance_to_center: .1
+
+  smooth_on_n_frames: 3
+
+  desired_face_width: 512
+
+  desired_left_eye: !!float .25

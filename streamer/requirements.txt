@@ -1,0 +1,14 @@
+appdirs==1.4.3
+attrs==18.2.0
+black==18.9b0
+Click==7.0
+dlib==19.16.0
+entrypoints==0.3
+flake8==3.7.7
+mccabe==0.6.1
+numpy==1.16.1
+opencv-python==4.0.0.21
+pycodestyle==2.5.0
+pyflakes==2.1.0
+PyYAML==3.13
+toml==0.10.0

@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  api:
+    build:
+      context: ./api/
+      dockerfile: ./docker/Dockerfile
+    command: "django-admin runserver 0.0.0.0:8000"
+    depends_on:
+      - postgresql
+      - localstack
+    ports:
+      - 8000:8000
+    environment:
+      - DB_HOST=postgresql
+      - DB_NAME=main
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DJANGO_SETTINGS_MODULE=api.settings
+      - PYTHONUNBUFFERED=True
+    volumes:
+      - ./api/:/api/
+
+  localstack:
+    image: localstack/localstack:0.8.10
+    ports:
+      - 4572:4572
+      - 4569:4569
+      - 9000:9000
+    environment:
+      - DEBUG=1
+      - DEFAULT_REGION=eu-west-1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - PORT_WEB_UI=9000
+      - SERVICES=dynamodb,s3
+    volumes:
+      - /tmp/localstack:/tmp/localstack
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  postgresql:
+    image: postgres:10.3
+    volumes:
+      - ./local_volumes/db/:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=main
+    ports:
+      - 5432:5432
