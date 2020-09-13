@@ -6,6 +6,7 @@ __pycache__
 .vscode/
 
 local_volumes/
+venv/
 
 # Project zip archive
 
