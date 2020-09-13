@@ -44,4 +44,4 @@ services:
     environment:
       - POSTGRES_DB=main
     ports:
-      - 5432:5432
+      - 5432
