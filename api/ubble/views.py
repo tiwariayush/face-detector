@@ -8,7 +8,7 @@ from .models import StreamerSession, SingleStreamIteration
 from . import constants
 
 
-class StreamerSessionViewSet(viewsets.ReadOnlyModelViewSet):
+class StreamerSessionViewSet(viewsets.ModelViewSet):
     """
     List all stream sessions
     """
@@ -16,7 +16,7 @@ class StreamerSessionViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = StreamerSessionSerializer
 
 
-class SingleStreamIterationViewSet(viewsets.ReadOnlyModelViewSet):
+class SingleStreamIterationViewSet(viewsets.ModelViewSet):
 
     queryset = SingleStreamIteration.objects.all()
     serializer_class = StreamIterationSerializer

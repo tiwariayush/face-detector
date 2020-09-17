@@ -1,5 +1,3 @@
-import json
-
 from rest_framework import status
 from rest_framework.test import APIClient
 from django.test import TestCase
@@ -23,18 +21,14 @@ class StreamingSessionTest(TestCase):
 
     def test_get_all_streamer_sessions(self):
         # get API response
-        response = client.get("/stream-sessions/")
+        response = client.get("/api/stream-sessions/")
         streamer_sessions = StreamerSession.objects.all()
         serializer = StreamerSessionSerializer(streamer_sessions, many=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
 
-    def test_cannot_make_post(self):
-        response = client.post("/stream-sessions/")
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-
     def test_get_single_streaming_session(self):
-        response = client.get('/stream-sessions/1/')
+        response = client.get('/api/stream-sessions/1/')
         streamer_session = StreamerSession.objects.get(id=1)
         serializer = StreamerSessionSerializer(streamer_session)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -78,25 +72,21 @@ class SingleStreamIterationTest(TestCase):
 
     def test_get_all_iterations(self):
         # get API response
-        response = client.get("/stream-iterations/")
+        response = client.get("/api/stream-iterations/")
         stream_iterations = SingleStreamIteration.objects.all()
         serializer = StreamIterationSerializer(stream_iterations, many=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
 
-    def test_cannot_make_post_for_stream_iteration(self):
-        response = client.post("/stream-iterations/")
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-
     def test_get_single_stream_iteration(self):
-        response = client.get('/stream-iterations/1/')
+        response = client.get('/api/stream-iterations/1/')
         stream_iteration = SingleStreamIteration.objects.get(id=1)
         serializer = StreamIterationSerializer(stream_iteration)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
 
     def test_get_extracted_faces_for_session_if_all_face_detected(self):
-        response = client.get('/stream-sessions/1/faces')
+        response = client.get('/api/stream-sessions/1/faces')
         data = {
             'session_id': 1,
             'extracted_faces_links': [
@@ -108,7 +98,7 @@ class SingleStreamIterationTest(TestCase):
         self.assertEqual(response.data, data)
 
     def test_get_extracted_faces_for_session_if_some_face_detected(self):
-        response = client.get('/stream-sessions/2/faces')
+        response = client.get('/api/stream-sessions/2/faces')
         data = {
             'session_id': 2,
             'extracted_faces_links': [
