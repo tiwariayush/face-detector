@@ -1,6 +1,7 @@
 import cv2
 import time
 import boto3
+import botocore
 
 from src.video import compress
 from src.face import FaceTracker
@@ -55,8 +56,41 @@ def run():
     # Get the bucket.
     bucket = s3.Bucket('ubblebucket')
 
-    # TODO: 1. Delete old dynamoDB table if exists
-    # TODO: 2. Create new table
+    # Get the dynamodb resource
+    dynamodb = boto3.resource('dynamodb', endpoint_url='http://localhost:4569')
+    # Get the table
+    table = dynamodb.Table('ubbledb')
+
+    # Delete old dynamoDB table if exists
+    try:
+        table.delete()
+    except botocore.exceptions.ResourceNotFoundException:
+        pass
+
+    # Create new table
+    table = dynamodb.create_table(
+        TableName='ubbledb',
+        KeySchema=[
+            {
+                'AttributeName': 'id',
+                'KeyType': 'HASH'
+            },
+        ],
+        AttributeDefinitions=[
+            {
+                'AttributeName': 'id',
+                'AttributeType': 'S'
+            },
+        ],
+        ProvisionedThroughput={
+            'ReadCapacityUnits': 5,
+            'WriteCapacityUnits': 5
+        }
+    )
+
+    # Counter which we will use as ID
+    counter = 1
+
     while True:
         # Get the coloured frame (ndarray) of the video captured
         ret, frame = video_capture.read()
@@ -77,18 +111,26 @@ def run():
         # show frames
         cv2.imshow(WINDOW_NAME, output_frame)
 
+        # Add data to dynamoDB Table
+        table.put_item(
+            Item={
+                'id': str(counter),
+                'input_frame_path': input_frame_path,
+                'output_frame_path': output_frame_path,
+                'feedback': feedback
+            }
+        )
+        # Increase the counter
+        counter += 1
+
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
-
-        stop_time = time.time()
-
-        # TODO: 3. Add data to dynamoDB Table
 
     # Release video_capture if job is finished
     video_capture.release()
 
     # TODO: 4. Clean data and make post request to API and save the values in postgres
-    # TODO: 5. Delete dynamoDB table
+
 
 if __name__ == "__main__":
     run()
