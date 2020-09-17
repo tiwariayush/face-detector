@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import StreamerSession, SingleStreamIteration
+
+# Register the models for admin
+admin.site.register(StreamerSession)
+admin.site.register(SingleStreamIteration)

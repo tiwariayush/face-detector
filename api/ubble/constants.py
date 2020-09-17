@@ -1,0 +1,7 @@
+NO_FACE_IN_FRAME = "NO_FACE_IN_FRAME"
+FACE_DETECTED = "FACE_DETECTED"
+
+FEEDBACK_CHOICES = (
+    (NO_FACE_IN_FRAME, "no face in frame"),
+    (FACE_DETECTED, "face detected"),
+)
