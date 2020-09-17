@@ -53,12 +53,6 @@ def save_frame_to_s3_bucket_with_timestamp(frame, bucket, is_output=False):
 
 
 def run():
-    # init video feed
-    cv2.namedWindow(WINDOW_NAME)
-    # capture the video from the webcam
-    video_capture = cv2.VideoCapture(0)
-    face_tracker = FaceTracker()
-
     # Get the s3 resource
     s3 = boto3.resource('s3', endpoint_url=S3_ENDPOINT)
     # Get the bucket.
@@ -98,6 +92,12 @@ def run():
 
     # Counter which we will use as ID
     counter = 1
+
+    # init video feed
+    cv2.namedWindow(WINDOW_NAME)
+    # capture the video from the webcam
+    video_capture = cv2.VideoCapture(0)
+    face_tracker = FaceTracker()
 
     while True:
         start_time = time.time()
