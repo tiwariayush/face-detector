@@ -30,18 +30,18 @@ def save_frame_to_s3_bucket_with_timestamp(frame, bucket, is_output=False):
     """
     # Create a name for image to be created with a timestamp in it
     if is_output:
-        input_image_name = 'output_%s.jpg' % time.strftime('%Y%m%d-%H%M%S')
+        image_name = 'output_%s.jpg' % time.strftime('%Y%m%d-%H%M%S')
     else:
-        input_image_name = '%s.jpg' % time.strftime('%Y%m%d-%H%M%S')
+        image_name = '%s.jpg' % time.strftime('%Y%m%d-%H%M%S')
 
     # Convert the frame image to string. This is dirty but useful as we don't
     # need to save the image on local disk
     image_string = cv2.imencode('.jpg', frame)[1].tostring()
 
     # Put the image and the body of image on the designated path
-    bucket.put_object(Key=input_image_name, Body=image_string)
+    bucket.put_object(Key=image_name, Body=image_string)
 
-    return image_string
+    return image_name
 
 
 def run():
