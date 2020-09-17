@@ -1,5 +1,4 @@
 import uuid
-
 from django.db import models
 from django.utils import timezone
 
@@ -72,7 +71,7 @@ class SingleStreamIteration(models.Model):
     )
     session = models.ForeignKey(
         'StreamerSession',
-        related_name='frames',
+        related_name='stream_iterations',
         verbose_name="Streamer Session",
         # Delete the frames related if the stream session is deleted
         on_delete=models.CASCADE,
