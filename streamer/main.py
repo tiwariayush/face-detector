@@ -2,11 +2,19 @@ import cv2
 import time
 import boto3
 import botocore
+import requests
+import logging
 
 from src.video import compress
 from src.face import FaceTracker
 
 WINDOW_NAME = "Ubble Interview"
+S3_BUCKET_NAME = "ubblebucket"
+S3_ENDPOINT = "http://localhost:4572"
+DYNAMODB_TABLE_NAME = "ubbledb"
+DYNAMODB_ENDPOINT = "http://localhost:4569"
+
+logger = logging.getLogger()
 
 
 def save_frame_to_s3_bucket_with_timestamp(frame, bucket, is_output=False):
@@ -52,14 +60,14 @@ def run():
     face_tracker = FaceTracker()
 
     # Get the s3 resource
-    s3 = boto3.resource('s3', endpoint_url='http://localhost:4572')
+    s3 = boto3.resource('s3', endpoint_url=S3_ENDPOINT)
     # Get the bucket.
-    bucket = s3.Bucket('ubblebucket')
+    bucket = s3.Bucket(S3_BUCKET_NAME)
 
     # Get the dynamodb resource
-    dynamodb = boto3.resource('dynamodb', endpoint_url='http://localhost:4569')
+    dynamodb = boto3.resource('dynamodb', endpoint_url=DYNAMODB_ENDPOINT)
     # Get the table
-    table = dynamodb.Table('ubbledb')
+    table = dynamodb.Table(DYNAMODB_TABLE_NAME)
 
     # Delete old dynamoDB table if exists
     try:
@@ -69,7 +77,7 @@ def run():
 
     # Create new table
     table = dynamodb.create_table(
-        TableName='ubbledb',
+        TableName=DYNAMODB_TABLE_NAME,
         KeySchema=[
             {
                 'AttributeName': 'id',
@@ -92,6 +100,7 @@ def run():
     counter = 1
 
     while True:
+        start_time = time.time()
         # Get the coloured frame (ndarray) of the video captured
         ret, frame = video_capture.read()
         frame = compress(frame, 2)  # to make it run faster
@@ -126,10 +135,39 @@ def run():
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
 
-    # Release video_capture if job is finished
+    stop_time = time.time()
+    # Release video_capture if job/streaming is finished
     video_capture.release()
 
-    # TODO: 4. Clean data and make post request to API and save the values in postgres
+    # Since for every single stream we have a new table, hence all the data in the table
+    # is required to be saved in postgres. In this case, we can use `scan` as we don't
+    # remove or filter anything from results.
+    table_data = table.scan()
+
+    # Send API request to save the data in Postgres
+    # Send POST request to API to create StreamerSession object
+    session_data = {
+        'start_time': start_time,
+        'stop_time': stop_time,
+    }
+    response = requests.post(
+        'http://localhost:8000/api/stream-sessions/',
+        data=session_data
+    )
+
+    # Get the stream session ID if we have successful response
+    if response.status_code == 201:
+        session_id = response.json()['id']
+        logger.info(f'Stream session with ID {session_id} created')
+        # Create new Stream Iteration objects for every iterations using POST request
+        for item in table_data['Items']:
+            data = {
+                'session': session_id,
+                'feedback': item['feedback'],
+                'input_frame_url': f"{S3_ENDPOINT}/{S3_BUCKET_NAME}/{item['input_frame_path']}",
+                'output_frame_url': f"{S3_ENDPOINT}/{S3_BUCKET_NAME}/{item['output_frame_path']}"
+            }
+            requests.post('http://localhost:8000/api/stream-iterations/', data=data)
 
 
 if __name__ == "__main__":
