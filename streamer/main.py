@@ -55,6 +55,8 @@ def run():
     # Get the bucket.
     bucket = s3.Bucket('ubblebucket')
 
+    # TODO: 1. Delete old dynamoDB table if exists
+    # TODO: 2. Create new table
     while True:
         # Get the coloured frame (ndarray) of the video captured
         ret, frame = video_capture.read()
@@ -78,9 +80,15 @@ def run():
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
 
+        stop_time = time.time()
+
+        # TODO: 3. Add data to dynamoDB Table
+
     # Release video_capture if job is finished
     video_capture.release()
 
+    # TODO: 4. Clean data and make post request to API and save the values in postgres
+    # TODO: 5. Delete dynamoDB table
 
 if __name__ == "__main__":
     run()
