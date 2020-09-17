@@ -3,18 +3,13 @@ from rest_framework import serializers
 from .models import StreamerSession, SingleStreamIteration
 
 
-class StreamerSessionSerializer(serializers.HyperlinkedModelSerializer):
+class StreamerSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = StreamerSession
-        fields = ('start_time', 'stop_time', 'stream_iterations')
+        fields = "__all__"
 
 
-class StreamIterationSerializer(serializers.HyperlinkedModelSerializer):
+class StreamIterationSerializer(serializers.ModelSerializer):
     class Meta:
         model = SingleStreamIteration
-        fields = (
-            'unique_token',
-            'input_frame_url',
-            'output_frame_url',
-            'feedback',
-        )
+        fields = "__all__"
