@@ -12,4 +12,5 @@ opencv-python==4.0.0.21
 pycodestyle==2.5.0
 pyflakes==2.1.0
 PyYAML==3.13
+requests==2.24.0
 toml==0.10.0
