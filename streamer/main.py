@@ -6,7 +6,7 @@ import requests
 import logging
 
 from src.video import compress
-from src.face import FaceTracker
+from src.face import FaceTracker, FACE_DETECTED
 
 WINDOW_NAME = "Ubble Interview"
 S3_BUCKET_NAME = "ubblebucket"
@@ -112,10 +112,15 @@ def run():
         input_frame_path = save_frame_to_s3_bucket_with_timestamp(frame, bucket)
 
         # feedback is the status of face detected and output_frame is the grayframe with text on it
-        feedback, output_frame = face_tracker.run(frame)
+        feedback, output_frame, detected_face = face_tracker.run(frame)
 
         # Save the output frame to S3 and get the path
         output_frame_path = save_frame_to_s3_bucket_with_timestamp(output_frame, bucket, True)
+
+        detected_face_path = ''
+        # If there is a face detected, save the detected face image to S3 and get the path
+        if feedback == FACE_DETECTED:
+            detected_face_path = save_frame_to_s3_bucket_with_timestamp(detected_face, bucket)
 
         # show frames
         cv2.imshow(WINDOW_NAME, output_frame)
@@ -126,7 +131,8 @@ def run():
                 'id': str(counter),
                 'input_frame_path': input_frame_path,
                 'output_frame_path': output_frame_path,
-                'feedback': feedback
+                'feedback': feedback,
+                'detected_face_path': detected_face_path,
             }
         )
         # Increase the counter
@@ -161,11 +167,18 @@ def run():
         logger.info(f'Stream session with ID {session_id} created')
         # Create new Stream Iteration objects for every iterations using POST request
         for item in table_data['Items']:
+            # Create the detected face URL. It will be empty string in case no face detected
+            if item['detected_face_path']:
+                detected_face_url = f"{S3_ENDPOINT}/{S3_BUCKET_NAME}/{item['detected_face_path']}"
+            else:
+                detected_face_url = ''
+
             data = {
                 'session': session_id,
                 'feedback': item['feedback'],
                 'input_frame_url': f"{S3_ENDPOINT}/{S3_BUCKET_NAME}/{item['input_frame_path']}",
-                'output_frame_url': f"{S3_ENDPOINT}/{S3_BUCKET_NAME}/{item['output_frame_path']}"
+                'output_frame_url': f"{S3_ENDPOINT}/{S3_BUCKET_NAME}/{item['output_frame_path']}",
+                'detected_face_url': detected_face_url,
             }
             requests.post('http://localhost:8000/api/stream-iterations/', data=data)
 

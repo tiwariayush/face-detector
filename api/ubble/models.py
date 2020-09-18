@@ -60,7 +60,7 @@ class SingleStreamIteration(models.Model):
         S3 URL for input frame
     output_frame_url: URL
         S3 URL for output frame
-    extracted_face: URL
+    detected_face_url: URL
         S3 URL for extracted face
     """
     id = models.AutoField(primary_key=True)
@@ -77,7 +77,8 @@ class SingleStreamIteration(models.Model):
         on_delete=models.CASCADE,
     )
     input_frame_url = models.URLField(verbose_name="Input frame image URL")
-    output_frame_url = models.URLField(verbose_name="Input frame image URL")
+    output_frame_url = models.URLField(verbose_name="Output frame image URL")
+    detected_face_url = models.URLField(verbose_name="Detected face image URL")
 
     def __str__(self):
         return f'Iteration with UUID {str(self.unique_token)} for {str(self.session)}'

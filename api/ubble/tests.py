@@ -49,6 +49,7 @@ class SingleStreamIterationTest(TestCase):
             feedback=FACE_DETECTED,
             input_frame_url='https://xyz.com/test.jpg',
             output_frame_url='https://xyz.com/testoutput1.jpg',
+            detected_face_url='https://xyz.com/testdetected1.jpg',
             session=self.session_1
         )
         self.iteration_2 = SingleStreamIteration.objects.create(
@@ -56,6 +57,7 @@ class SingleStreamIterationTest(TestCase):
             feedback=FACE_DETECTED,
             input_frame_url='https://xyz.com/test.jpg',
             output_frame_url='https://xyz.com/testoutput2.jpg',
+            detected_face_url='https://xyz.com/testdetected2.jpg',
             session=self.session_1
         )
         self.iteration_3 = SingleStreamIteration.objects.create(
@@ -63,6 +65,7 @@ class SingleStreamIterationTest(TestCase):
             feedback=FACE_DETECTED,
             input_frame_url='https://xyz.com/test.jpg',
             output_frame_url='https://xyz.com/testoutput3.jpg',
+            detected_face_url='https://xyz.com/testdetected3.jpg',
             session=self.session_2
         )
         self.iteration_4 = SingleStreamIteration.objects.create(
@@ -90,8 +93,8 @@ class SingleStreamIterationTest(TestCase):
         data = {
             'session_id': 1,
             'extracted_faces_links': [
-                'https://xyz.com/testoutput2.jpg',
-                'https://xyz.com/testoutput1.jpg',
+                'https://xyz.com/testdetected2.jpg',
+                'https://xyz.com/testdetected1.jpg',
             ]
         }
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -102,7 +105,7 @@ class SingleStreamIterationTest(TestCase):
         data = {
             'session_id': 2,
             'extracted_faces_links': [
-                'https://xyz.com/testoutput3.jpg',
+                'https://xyz.com/testdetected3.jpg',
             ]
         }
         self.assertEqual(response.status_code, status.HTTP_200_OK)

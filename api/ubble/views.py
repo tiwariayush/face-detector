@@ -47,7 +47,8 @@ def get_extracted_faces(request, stream_session_id):
     }
 
     for single_stream_iteration in stream_iterations.all():
+        # If there was a face detected, we add the URL of the detected image in the face data
         if single_stream_iteration.feedback == constants.FACE_DETECTED:
-            faces_data['extracted_faces_links'].append(single_stream_iteration.output_frame_url)
+            faces_data['extracted_faces_links'].append(single_stream_iteration.detected_face_url)
 
     return Response(faces_data)

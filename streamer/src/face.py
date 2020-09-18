@@ -56,6 +56,7 @@ class FaceTracker:
             cv2.LINE_AA,
         )
 
+        detected_face = None
         if feedback == FACE_DETECTED:
             output_frame = cv2.rectangle(
                 output_frame,
@@ -64,8 +65,14 @@ class FaceTracker:
                 (0, 255, 0),
                 1,
             )
+            # Get the detected face, but use the initial gray frame to avoid
+            # having the text on top of the detected face.
+            detected_face = cv2.cvtColor(gray_frame, cv2.COLOR_GRAY2RGB)[
+                            best_bounding_box.top(): best_bounding_box.bottom(),
+                            best_bounding_box.left():best_bounding_box.right()
+                            ]
 
-        return feedback, output_frame
+        return feedback, output_frame, detected_face
 
     def find_best_bounding_box(self, candidate_bounding_boxes, scores, gray_frame):
         # computes the size of the bounding box diagonal
