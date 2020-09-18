@@ -42,3 +42,13 @@ Once the streamer is done (you can terminate it based on a number of extracted f
 ## How to submit your proposal
 
 You should have received a compressed version of this repository. To submit your answer, simply commit your changes in a new branch and return us a compressed version of the updated repository.
+
+## Solutions
+
+- During running of streamer, images are saved inside S3 and info on single frame iteration is saved inside dynamodb.
+- Once the streamer is done, API calls are made to create and save data as Django objects from the dynamodb data.
+
+Different API calls to get data:
+1. To get extracted faces of session with <sessionID>: `http://localhost:8000/api/stream-sessions/<sessionId>/faces`
+2. To get all streaming sessions: `http://localhost:8000/api/stream-sessions/`
+3. To get all frame iterations for a streaming session: `http://localhost:8000/api/stream-sessions/<sessionId>/iterations`
