@@ -31,14 +31,7 @@ class StreamerSession(models.Model):
     )
 
     def __str__(self):
-        return f"Session #{self.id} lasted for {self.total_duration}"
-
-    @property
-    def total_duration(self):
-        """
-        Returns total running duration of the streaming session.
-        """
-        return (self.stop_time - self.start_time).total_seconds()
+        return f"Session #{self.id}"
 
 
 class SingleStreamIteration(models.Model):
