@@ -12,10 +12,16 @@ urlpatterns = [
     # gives us urls to traverse through data.
     path('', include(router.urls)),
 
-    # Extracted faced for the stream session URLS
+    # URL for extracted faces for single stream session
     path(
         'stream-sessions/<int:stream_session_id>/faces',
         views.get_extracted_faces,
         name='get_extracted_faces',
+    ),
+    # Iterated frames for single stream session
+    path(
+        'stream-sessions/<int:stream_session_id>/iterations',
+        views.get_stream_iterations,
+        name='get_stream_iterations',
     ),
 ]

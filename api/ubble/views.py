@@ -52,3 +52,17 @@ def get_extracted_faces(request, stream_session_id):
             faces_data['extracted_faces_links'].append(single_stream_iteration.detected_face_url)
 
     return Response(faces_data)
+
+
+@api_view(['GET'])
+def get_stream_iterations(request, stream_session_id):
+    """
+    Returns the frame iteration lists for one session
+    """
+    # We fetch the requested Streaming session
+    stream_session = get_object_or_404(StreamerSession, id=stream_session_id)
+
+    # We can now start building the response data.
+    stream_iterations = stream_session.stream_iterations
+    serializer = StreamIterationSerializer(stream_iterations, many=True)
+    return Response(serializer.data)
