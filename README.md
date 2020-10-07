@@ -1,3 +1,6 @@
+# AI Face detector
+Simple **face detector API** using `dlib` using `localstack` to save data in `S3 bucket` and `dynamoDB`.
+
 ## Overview
 
 The project is divided into two directories.
