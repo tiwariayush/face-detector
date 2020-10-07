@@ -35,6 +35,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='singlestreamiteration',
             name='session',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='frames', to='ubble.StreamerSession', verbose_name='Streamer Session'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='frames', to='streamer.StreamerSession', verbose_name='Streamer Session'),
         ),
     ]

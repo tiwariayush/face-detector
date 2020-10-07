@@ -3,7 +3,7 @@
 The project is divided into two directories.
 
 - `./streamer` : a python script that launches your camera and detects your face.
-- `./api` : a vanilla django api, with Postgresql.
+- `./api` : a vanilla django api (with an app `streamer`), with Postgresql.
 
 ## Requirements
 

@@ -7,13 +7,13 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ubble', '0001_initial'),
+        ('streamer', '0001_initial'),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='singlestreamiteration',
             name='session',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='stream_iterations', to='ubble.StreamerSession', verbose_name='Streamer Session'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='stream_iterations', to='streamer.StreamerSession', verbose_name='Streamer Session'),
         ),
     ]

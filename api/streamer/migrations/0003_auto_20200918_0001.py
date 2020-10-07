@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ubble', '0002_auto_20200917_1420'),
+        ('streamer', '0002_auto_20200917_1420'),
     ]
 
     operations = [
