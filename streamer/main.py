@@ -8,10 +8,10 @@ import logging
 from src.video import compress
 from src.face import FaceTracker, FACE_DETECTED
 
-WINDOW_NAME = "Ubble Interview"
-S3_BUCKET_NAME = "ubblebucket"
+WINDOW_NAME = "Face Window"
+S3_BUCKET_NAME = "testBucket"
 S3_ENDPOINT = "http://localhost:4572"
-DYNAMODB_TABLE_NAME = "ubbledb"
+DYNAMODB_TABLE_NAME = "testDB"
 DYNAMODB_ENDPOINT = "http://localhost:4569"
 
 logger = logging.getLogger()
@@ -117,7 +117,7 @@ def run():
         # Save the output frame to S3 and get the path
         output_frame_path = save_frame_to_s3_bucket_with_timestamp(output_frame, bucket, True)
 
-        detected_face_path = ''
+        detected_face_path = 'empty_image'
         # If there is a face detected, save the detected face image to S3 and get the path
         if feedback == FACE_DETECTED:
             detected_face_path = save_frame_to_s3_bucket_with_timestamp(detected_face, bucket)
@@ -126,15 +126,25 @@ def run():
         cv2.imshow(WINDOW_NAME, output_frame)
 
         # Add data to dynamoDB Table
-        table.put_item(
-            Item={
-                'id': str(counter),
-                'input_frame_path': input_frame_path,
-                'output_frame_path': output_frame_path,
-                'feedback': feedback,
-                'detected_face_path': detected_face_path,
-            }
-        )
+        if detected_face_path:
+            table.put_item(
+                Item={
+                    'id': str(counter),
+                    'input_frame_path': input_frame_path,
+                    'output_frame_path': output_frame_path,
+                    'feedback': feedback,
+                    'detected_face_path': detected_face_path
+                }
+            )
+        else:
+            table.put_item(
+                Item={
+                    'id': str(counter),
+                    'input_frame_path': input_frame_path,
+                    'output_frame_path': output_frame_path,
+                    'feedback': feedback,
+                }
+            )
         # Increase the counter
         counter += 1
 
